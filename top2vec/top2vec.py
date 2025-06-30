@@ -3252,7 +3252,7 @@ class Top2Vec:
                                                               stride=40)
         return avg_embeddings, corpus_token_embeddings, corpus_labels
 
-    def get_theta(self,test_corpus):
+    def get_theta(self,test_corpus, reduced=False):
         '''
         return theta matrix of test corpus
         '''
@@ -3261,7 +3261,10 @@ class Top2Vec:
         test_corpus_embeddings, test_corpus_token_embeddings, test_corpus_labels = self._get_document_vector(test_corpus)
         test_corpus_token_embeddings = smooth_document_token_embeddings(test_corpus_token_embeddings, window_size=self.c_top2vec_smoothing_window)
         test_corpus_token_embeddings = normalize(np.vstack(test_corpus_token_embeddings))
-        topic_vectors = self.topic_vectors
+        if reduced:
+            topic_vectors = self.topic_vectors_reduced
+        else:
+            topic_vectors = self.topic_vectors
         doc_top, doc_dist = self._calculate_documents_topic(topic_vectors, test_corpus_token_embeddings)
         topic_sizes = pd.Series(doc_top).value_counts()
         doc_top = np.array(doc_top)
